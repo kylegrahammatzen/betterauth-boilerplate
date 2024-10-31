@@ -72,7 +72,7 @@ export const OrganizationSwitcher = () => {
           className="border data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground pl-3"
           disabled={isLoading}
         >
-          {!isLoading && (
+          {/* {!isLoading && (
             <>
               {activeOrganization ? (
                 <>
@@ -99,7 +99,7 @@ export const OrganizationSwitcher = () => {
               )}
               <ChevronsUpDown className="ml-auto" />
             </>
-          )}
+          )} */}
         </SidebarMenuButton>
       </DropdownMenuTrigger>
       <DropdownMenuContent
