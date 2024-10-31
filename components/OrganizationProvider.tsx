@@ -42,10 +42,15 @@ export const OrganizationProvider = ({
     }
   };
 
-  const addOrganization = (newOrganization: Organization) => {
+  const addOrganization = async (newOrganization: Organization) => {
     // This is a placeholder. In a real application, you'd typically call an API to create the organization
     console.log("Adding new organization:", newOrganization);
     // After successfully adding the organization, you might want to refetch the list of organizations
+
+    await authClient.organization.create({
+      name: newOrganization.name,
+      slug: newOrganization.slug,
+    });
   };
 
   const value = {

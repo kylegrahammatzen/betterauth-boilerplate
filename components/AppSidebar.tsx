@@ -10,17 +10,11 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarProvider,
-  SidebarTrigger,
 } from "@/components/ui/sidebar";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { ProfileDropdown } from "./ProfileDropdown";
 import { OrganizationSwitcher } from "./OrganizationSwitcher";
-import { ChevronsLeft } from "lucide-react";
+import { ToggleSidebar } from "./ToggleSidebar";
 import { OrganizationProvider } from "./OrganizationProvider";
 
 type AppSidebarProps = {
@@ -33,9 +27,9 @@ export const AppSidebar = (props: AppSidebarProps) => {
   const activeSession = data || props.initialSession;
 
   return (
-    <OrganizationProvider>
-      <SidebarProvider>
-        <TooltipProvider>
+    <SidebarProvider>
+      <TooltipProvider>
+        <OrganizationProvider>
           <Sidebar collapsible="icon">
             <SidebarHeader>
               <SidebarMenu>
@@ -52,19 +46,12 @@ export const AppSidebar = (props: AppSidebarProps) => {
               </SidebarMenu>
             </SidebarFooter>
           </Sidebar>
-          <SidebarInset className="h-full">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <SidebarTrigger className="absolute left-4 top-4 w-10 h-10 border border-input bg-background hover:bg-accent hover:text-accent-foreground data-[state=open]:bg-accent rounded-md flex items-center justify-center">
-                  <ChevronsLeft className="h-4 w-4" />
-                </SidebarTrigger>
-              </TooltipTrigger>
-              <TooltipContent side="right">Toggle Sidebar</TooltipContent>
-            </Tooltip>
+          <SidebarInset className="h-full p-2">
+            <ToggleSidebar />
             {props.children}
           </SidebarInset>
-        </TooltipProvider>
-      </SidebarProvider>
-    </OrganizationProvider>
+        </OrganizationProvider>
+      </TooltipProvider>
+    </SidebarProvider>
   );
 };

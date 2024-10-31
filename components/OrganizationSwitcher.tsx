@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useCallback } from "react";
 import { ChevronsUpDown, Search, Users } from "lucide-react";
 import {
   DropdownMenu,
@@ -24,6 +24,7 @@ export const OrganizationSwitcher = () => {
   const { data: activeOrganization } = authClient.useActiveOrganization();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const filteredOrganizations = useMemo(() => {
     const trimmedQuery = searchQuery.trim().toLowerCase();
@@ -34,60 +35,71 @@ export const OrganizationSwitcher = () => {
       : organizations;
   }, [organizations, searchQuery]);
 
-  const handleOrganizationSelect = (organizationId: string) => {
-    setActiveOrganization(organizationId);
-    setIsDropdownOpen(false);
-    setSearchQuery("");
-  };
+  const handleOrganizationSelect = useCallback(
+    (organizationId: string) => {
+      setActiveOrganization(organizationId);
+      setIsDropdownOpen(false);
+      setSearchQuery("");
+    },
+    [setActiveOrganization]
+  );
 
   const getScrollAreaHeight = () => {
     if (filteredOrganizations.length > 2) return "h-[9.25rem]";
     if (filteredOrganizations.length === 2) return "h-[6.16rem]";
     if (filteredOrganizations.length === 1) return "h-[3.08rem]";
-    return "h-[3.08rem]"; // Apply minimum height even when there are 0 organizations
+    return "h-[3.08rem]";
   };
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  const handleDropdownOpenChange = (open: boolean) => {
+    if (!isLoading) {
+      setIsDropdownOpen(open);
+      if (open) {
+        setTimeout(() => {
+          searchInputRef.current?.focus();
+        }, 0);
+      } else {
+        setSearchQuery("");
+      }
+    }
+  };
 
   return (
-    <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
+    <DropdownMenu open={isDropdownOpen} onOpenChange={handleDropdownOpenChange}>
       <DropdownMenuTrigger asChild>
         <SidebarMenuButton
           size="lg"
           className="border data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground pl-3"
+          disabled={isLoading}
         >
-          {activeOrganization ? (
+          {!isLoading && (
             <>
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                {getInitials(activeOrganization.name)}
-              </div>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">
-                  {activeOrganization.name}
-                </span>
-                <span className="text-xs">
-                  {new Date(activeOrganization.createdAt).toLocaleDateString()}
-                </span>
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-muted text-sidebar-muted-foreground">
-                <Users className="h-4 w-4" />
-              </div>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">
-                  No organization selected
-                </span>
-                <span className="text-xs text-muted-foreground">
-                  Select an organization
-                </span>
-              </div>
+              {activeOrganization ? (
+                <>
+                  <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                    {getInitials(activeOrganization.name)}
+                  </div>
+                  <div className="grid flex-1 text-left text-sm leading-tight">
+                    <span className="truncate font-semibold">
+                      {activeOrganization.name}
+                    </span>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-muted text-sidebar-muted-foreground">
+                    <Users className="h-4 w-4" />
+                  </div>
+                  <div className="grid flex-1 text-left text-sm leading-tight">
+                    <span className="text-xs text-muted-foreground">
+                      Select an organization
+                    </span>
+                  </div>
+                </>
+              )}
+              <ChevronsUpDown className="ml-auto" />
             </>
           )}
-          <ChevronsUpDown className="ml-auto" />
         </SidebarMenuButton>
       </DropdownMenuTrigger>
       <DropdownMenuContent
@@ -100,14 +112,13 @@ export const OrganizationSwitcher = () => {
           <div className="relative">
             <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
             <Input
+              ref={searchInputRef}
               placeholder="Search organizations..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-8"
               onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                }
+                e.stopPropagation();
               }}
             />
           </div>
@@ -130,16 +141,19 @@ export const OrganizationSwitcher = () => {
                 <DropdownMenuItem
                   key={org.id}
                   className="flex items-center gap-2 p-2 cursor-pointer"
-                  onSelect={() => handleOrganizationSelect(org.id)}
+                  onSelect={(event) => {
+                    if (document.activeElement === searchInputRef.current) {
+                      event.preventDefault();
+                    } else {
+                      handleOrganizationSelect(org.id);
+                    }
+                  }}
                 >
                   <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                     {getInitials(org.name)}
                   </div>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="font-semibold truncate">{org.name}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {new Date(org.createdAt).toLocaleDateString()}
-                    </span>
                   </div>
                 </DropdownMenuItem>
               ))
@@ -152,7 +166,6 @@ export const OrganizationSwitcher = () => {
             event.preventDefault();
             setIsDropdownOpen(false);
             setSearchQuery("");
-            // This is a placeholder. You'd typically open a modal or navigate to a page to add a new organization
             const newOrg: Organization = {
               id: `new-org-${Date.now()}`,
               name: "New Organization",
