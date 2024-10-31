@@ -259,11 +259,15 @@ const Sidebar = React.forwardRef<
 );
 Sidebar.displayName = "Sidebar";
 
+interface SidebarTriggerProps extends React.ComponentProps<typeof Button> {
+  icon?: React.ReactNode
+}
+
 const SidebarTrigger = React.forwardRef<
   React.ElementRef<typeof Button>,
-  React.ComponentProps<typeof Button>
->(({ className, onClick, ...props }, ref) => {
-  const { toggleSidebar } = useSidebar();
+  SidebarTriggerProps
+>(({ className, onClick, icon, ...props }, ref) => {
+  const { toggleSidebar } = useSidebar()
 
   return (
     <Button
@@ -271,19 +275,19 @@ const SidebarTrigger = React.forwardRef<
       data-sidebar="trigger"
       variant="ghost"
       size="icon"
-      className={cn("h-7 w-7", className)}
+      className={cn("h-8 w-8", className)}
       onClick={(event) => {
-        onClick?.(event);
-        toggleSidebar();
+        onClick?.(event)
+        toggleSidebar()
       }}
       {...props}
     >
-      <PanelLeft />
+      {icon || <PanelLeft />}
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
-  );
-});
-SidebarTrigger.displayName = "SidebarTrigger";
+  )
+})
+SidebarTrigger.displayName = "SidebarTrigger"
 
 const SidebarRail = React.forwardRef<
   HTMLButtonElement,
