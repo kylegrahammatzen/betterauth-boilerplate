@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useRef, useCallback } from "react";
+import { useState, useRef } from "react";
 import { ChevronsUpDown, Search, Users } from "lucide-react";
 import {
   DropdownMenu,
@@ -10,96 +10,104 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { SidebarMenuButton } from "@/components/ui/sidebar";
+import { SidebarMenuButton, useSidebar } from "@/components/ui/sidebar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { getInitials } from "@/lib/getInitials";
 import { useOrganization } from "./OrganizationProvider";
 import { authClient } from "@/lib/authClient";
 import type { Organization } from "@/lib/auth_types";
+import { cn } from "@/lib/utils";
 
-export const OrganizationSwitcher = () => {
+export function OrganizationSwitcher() {
   const { organizations, setActiveOrganization, addOrganization, isLoading } =
     useOrganization();
   const { data: activeOrganization } = authClient.useActiveOrganization();
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const searchInputRef = useRef<HTMLInputElement>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const searchRef = useRef<HTMLInputElement>(null);
+  const { state } = useSidebar();
 
-  const filteredOrganizations = useMemo(() => {
-    const trimmedQuery = searchQuery.trim().toLowerCase();
-    return trimmedQuery
-      ? organizations.filter((org) =>
-          org.name.toLowerCase().includes(trimmedQuery)
-        )
-      : organizations;
-  }, [organizations, searchQuery]);
-
-  const handleOrganizationSelect = useCallback(
-    (organizationId: string) => {
-      setActiveOrganization(organizationId);
-      setIsDropdownOpen(false);
-      setSearchQuery("");
-    },
-    [setActiveOrganization]
+  const filteredOrgs = organizations.filter((org) =>
+    search.trim()
+      ? org.name.toLowerCase().includes(search.toLowerCase().trim())
+      : true
   );
 
-  const getScrollAreaHeight = () => {
-    if (filteredOrganizations.length > 2) return "h-[9.25rem]";
-    if (filteredOrganizations.length === 2) return "h-[6.16rem]";
-    if (filteredOrganizations.length === 1) return "h-[3.08rem]";
-    return "h-[3.08rem]";
+  const scrollHeight =
+    filteredOrgs.length > 2
+      ? "h-[9.25rem]"
+      : filteredOrgs.length === 2
+      ? "h-[6.16rem]"
+      : "h-[3.08rem]";
+
+  const handleSelect = (orgId: string) => {
+    setActiveOrganization(orgId);
+    setIsOpen(false);
+    setSearch("");
   };
 
-  const handleDropdownOpenChange = (open: boolean) => {
-    if (!isLoading) {
-      setIsDropdownOpen(open);
-      if (open) {
-        setTimeout(() => {
-          searchInputRef.current?.focus();
-        }, 0);
-      } else {
-        setSearchQuery("");
-      }
+  const handleOpenChange = (open: boolean) => {
+    if (isLoading) return;
+    setIsOpen(open);
+    if (open) {
+      setTimeout(() => searchRef.current?.focus(), 0);
+    } else {
+      setSearch("");
     }
   };
 
+  const handleAddOrg = () => {
+    const newOrg: Organization = {
+      id: `org-${Date.now()}`,
+      name: "New Organization",
+      createdAt: new Date(),
+      slug: `org-${Date.now()}`,
+    };
+    addOrganization(newOrg);
+    setIsOpen(false);
+    setSearch("");
+  };
+
   return (
-    <DropdownMenu open={isDropdownOpen} onOpenChange={handleDropdownOpenChange}>
+    <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
       <DropdownMenuTrigger asChild>
         <SidebarMenuButton
           size="lg"
           className="border data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground pl-3"
           disabled={isLoading}
         >
-          {/* {!isLoading && (
+          {isLoading ? (
+            "Loading"
+          ) : activeOrganization ? (
             <>
-              {activeOrganization ? (
-                <>
-                  <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                    {getInitials(activeOrganization.name)}
-                  </div>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">
-                      {activeOrganization.name}
-                    </span>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-muted text-sidebar-muted-foreground">
-                    <Users className="h-4 w-4" />
-                  </div>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="text-xs text-muted-foreground">
-                      Select an organization
-                    </span>
-                  </div>
-                </>
-              )}
-              <ChevronsUpDown className="ml-auto" />
+              <div
+                className={cn(
+                  "flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground",
+                  state !== "collapsed" && "-ml-1"
+                )}
+              >
+                {getInitials(activeOrganization.name)}
+              </div>
+              <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-semibold">
+                  {activeOrganization.name}
+                </span>
+              </div>
             </>
-          )} */}
+          ) : (
+            <>
+              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-muted text-sidebar-muted-foreground">
+                <Users className="-ml-2 h-4 w-4" />
+              </div>
+              <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="-ml-2 text-xs text-muted-foreground">
+                  Select an organization
+                </span>
+              </div>
+            </>
+          )}
+          <ChevronsUpDown className="ml-auto" />
         </SidebarMenuButton>
       </DropdownMenuTrigger>
       <DropdownMenuContent
@@ -112,40 +120,38 @@ export const OrganizationSwitcher = () => {
           <div className="relative">
             <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
             <Input
-              ref={searchInputRef}
+              ref={searchRef}
               placeholder="Search organizations..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
               className="pl-8"
-              onKeyDown={(e) => {
-                e.stopPropagation();
-              }}
+              onKeyDown={(e) => e.stopPropagation()}
             />
           </div>
         </div>
         <DropdownMenuLabel className="text-xs text-muted-foreground">
-          Organizations ({filteredOrganizations.length})
+          Organizations ({filteredOrgs.length})
         </DropdownMenuLabel>
         <div
-          className={`${getScrollAreaHeight()} transition-all duration-300 ease-in-out overflow-hidden`}
+          className={`${scrollHeight} transition-all duration-300 ease-in-out overflow-hidden`}
         >
           <ScrollArea className="h-full">
-            {filteredOrganizations.length === 0 ? (
+            {filteredOrgs.length === 0 ? (
               <div className="flex items-center justify-center h-full">
                 <div className="text-center text-sm text-muted-foreground">
                   No organizations found.
                 </div>
               </div>
             ) : (
-              filteredOrganizations.map((org) => (
+              filteredOrgs.map((org) => (
                 <DropdownMenuItem
                   key={org.id}
                   className="flex items-center gap-2 p-2 cursor-pointer"
-                  onSelect={(event) => {
-                    if (document.activeElement === searchInputRef.current) {
-                      event.preventDefault();
+                  onSelect={(e) => {
+                    if (document.activeElement === searchRef.current) {
+                      e.preventDefault();
                     } else {
-                      handleOrganizationSelect(org.id);
+                      handleSelect(org.id);
                     }
                   }}
                 >
@@ -162,17 +168,9 @@ export const OrganizationSwitcher = () => {
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem
-          onSelect={(event) => {
-            event.preventDefault();
-            setIsDropdownOpen(false);
-            setSearchQuery("");
-            const newOrg: Organization = {
-              id: `new-org-${Date.now()}`,
-              name: "New Organization",
-              createdAt: new Date(),
-              slug: `new-org-${Date.now()}`,
-            };
-            addOrganization(newOrg);
+          onSelect={(e) => {
+            e.preventDefault();
+            handleAddOrg();
           }}
         >
           <div className="font-medium">Add organization</div>
@@ -180,4 +178,4 @@ export const OrganizationSwitcher = () => {
       </DropdownMenuContent>
     </DropdownMenu>
   );
-};
+}
