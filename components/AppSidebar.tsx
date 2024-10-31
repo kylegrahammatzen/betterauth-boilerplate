@@ -8,7 +8,6 @@ import {
   SidebarHeader,
   SidebarInset,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
   SidebarProvider,
   SidebarTrigger,
@@ -22,49 +21,50 @@ import {
 import { ProfileDropdown } from "./ProfileDropdown";
 import { OrganizationSwitcher } from "./OrganizationSwitcher";
 import { ChevronsLeft } from "lucide-react";
+import { OrganizationProvider } from "./OrganizationProvider";
 
-type AppSidebar = {
+type AppSidebarProps = {
   initialSession: Session;
   children: React.ReactNode;
 };
 
-const AppSidebar = (props: AppSidebar) => {
+export const AppSidebar = (props: AppSidebarProps) => {
   const { data } = useSession();
   const activeSession = data || props.initialSession;
 
   return (
-    <SidebarProvider>
-      <TooltipProvider>
-        <Sidebar collapsible="icon">
-          <SidebarHeader>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <OrganizationSwitcher />
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarHeader>
-          <SidebarFooter>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <ProfileDropdown session={activeSession} />
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarFooter>
-        </Sidebar>
-        <SidebarInset className="h-full">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <SidebarTrigger className="absolute left-4 top-4 w-10 h-10 border border-input bg-background hover:bg-accent hover:text-accent-foreground data-[state=open]:bg-accent rounded-md flex items-center justify-center">
-                <ChevronsLeft className="h-4 w-4" />
-              </SidebarTrigger>
-            </TooltipTrigger>
-            <TooltipContent side="right">Toggle Sidebar</TooltipContent>
-          </Tooltip>
-          {props.children}
-        </SidebarInset>
-      </TooltipProvider>
-    </SidebarProvider>
+    <OrganizationProvider>
+      <SidebarProvider>
+        <TooltipProvider>
+          <Sidebar collapsible="icon">
+            <SidebarHeader>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <OrganizationSwitcher />
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarHeader>
+            <SidebarFooter>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <ProfileDropdown session={activeSession} />
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarFooter>
+          </Sidebar>
+          <SidebarInset className="h-full">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <SidebarTrigger className="absolute left-4 top-4 w-10 h-10 border border-input bg-background hover:bg-accent hover:text-accent-foreground data-[state=open]:bg-accent rounded-md flex items-center justify-center">
+                  <ChevronsLeft className="h-4 w-4" />
+                </SidebarTrigger>
+              </TooltipTrigger>
+              <TooltipContent side="right">Toggle Sidebar</TooltipContent>
+            </Tooltip>
+            {props.children}
+          </SidebarInset>
+        </TooltipProvider>
+      </SidebarProvider>
+    </OrganizationProvider>
   );
 };
-
-export { AppSidebar };

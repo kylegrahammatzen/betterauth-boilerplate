@@ -1,3 +1,10 @@
+import { ActiveOrganizationDisplay } from "@/components/ActiveOrganizationDisplay";
+
 export default function AppPage() {
-  return <h1>dashboard page</h1>;
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-4">Dashboard Page</h1>
+      <ActiveOrganizationDisplay />
+    </div>
+  );
 }
