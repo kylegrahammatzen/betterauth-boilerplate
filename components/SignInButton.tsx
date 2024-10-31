@@ -1,3 +1,5 @@
+"use client";
+
 import { signIn } from "@/lib/authClient";
 import { Button } from "./ui/button";
 import { Github } from "lucide-react";
