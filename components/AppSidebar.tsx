@@ -4,6 +4,7 @@ import { Session } from "@/lib/auth_types";
 import { useSession } from "@/lib/authClient";
 import {
   Sidebar,
+  SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarInset,
@@ -16,6 +17,7 @@ import { ProfileDropdown } from "./ProfileDropdown";
 import { OrganizationSwitcher } from "./OrganizationSwitcher";
 import { ToggleSidebar } from "./ToggleSidebar";
 import { OrganizationProvider } from "./OrganizationProvider";
+import { ContentList } from "./ContentList";
 
 type AppSidebarProps = {
   initialSession: Session;
@@ -38,6 +40,9 @@ export const AppSidebar = (props: AppSidebarProps) => {
                 </SidebarMenuItem>
               </SidebarMenu>
             </SidebarHeader>
+            <SidebarContent>
+              <ContentList />
+            </SidebarContent>
             <SidebarFooter>
               <SidebarMenu>
                 <SidebarMenuItem>
