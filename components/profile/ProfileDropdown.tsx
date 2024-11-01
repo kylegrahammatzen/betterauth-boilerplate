@@ -63,7 +63,7 @@ const ProfileDropdown = (props: ProfileDropdownProps) => {
       <DropdownMenuContent
         className={cn(
           "w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg",
-          state === "collapsed" && "ml-2"
+          state === "collapsed" && "ml-4"
         )}
         side="bottom"
         align="end"

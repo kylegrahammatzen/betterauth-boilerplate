@@ -28,11 +28,13 @@ export function OrganizationSwitcher() {
   const searchRef = useRef<HTMLInputElement>(null);
   const { state } = useSidebar();
 
-  const filteredOrgs = organizations.filter((org) =>
-    search.trim()
-      ? org.name.toLowerCase().includes(search.toLowerCase().trim())
-      : true
-  );
+  const filteredOrgs = organizations
+    .filter((org) =>
+      search.trim()
+        ? org.name.toLowerCase().includes(search.toLowerCase().trim())
+        : true
+    )
+    .filter((org) => org.id !== activeOrganization?.id);
 
   const scrollHeight =
     filteredOrgs.length > 2
