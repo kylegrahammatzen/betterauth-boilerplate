@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 type ProfileAvatarProps = {
   name: string;
   image?: string;
+  badgeCount?: number;
 };
 
 const ProfileAvatar = (props: ProfileAvatarProps) => {

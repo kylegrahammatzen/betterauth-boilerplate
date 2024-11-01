@@ -7,18 +7,15 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
-  SidebarInset,
   SidebarMenu,
   SidebarMenuItem,
   SidebarProvider,
 } from "@/components/ui/sidebar";
-import { ToggleSidebar } from "./ToggleSidebar";
 import { ContentList } from "./ContentList";
 import { useMount } from "@/hooks/use-mount";
 import { ProfileDropdown } from "./profile/ProfileDropdown";
 import { OrganizationSwitcher } from "./OrganizationSwitcher";
 import { AppSidebarInset } from "./AppSidebarInset";
-import { OrganizationInvites } from "./OrganizationInvites";
 
 type AppSidebarProps = {
   initialSession: Session;
@@ -50,9 +47,6 @@ export const AppSidebar = (props: AppSidebarProps) => {
         </SidebarContent>
         <SidebarFooter>
           <SidebarMenu>
-            {/* <SidebarMenuItem>
-              <OrganizationInvites />
-            </SidebarMenuItem> */}
             <SidebarMenuItem>
               <ProfileDropdown session={activeSession} />
             </SidebarMenuItem>
