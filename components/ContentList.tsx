@@ -35,43 +35,6 @@ export function ContentList() {
       <SidebarMenu>
         <SidebarMenuItem>
           {isCollapsed ? (
-            <SidebarMenuButton asChild>
-              <Button variant="outline">
-                <Plus className="h-4 w-4" />
-                <span className="sr-only">Add Content</span>
-              </Button>
-            </SidebarMenuButton>
-          ) : (
-            <>
-              <SidebarGroupContent className="flex items-center justify-between py-1">
-                <span className="font-medium">Example Content</span>
-                {isMobile ? (
-                  <Button size="sm" variant="link">
-                    <Plus className="h-4 w-4" />
-                    <span className="sr-only">Add Content</span>
-                  </Button>
-                ) : (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button size="sm" variant="link">
-                        <Plus className="h-4 w-4" />
-                        <span className="sr-only">Add Content</span>
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side="right" align="center">
-                      Add Content
-                    </TooltipContent>
-                  </Tooltip>
-                )}
-              </SidebarGroupContent>
-            </>
-          )}
-          <SidebarMenuSub>
-            <h1>content</h1>
-          </SidebarMenuSub>
-        </SidebarMenuItem>
-        <SidebarMenuItem>
-          {isCollapsed ? (
             <>
               <SidebarMenuButton asChild>
                 {isMobile ? (
