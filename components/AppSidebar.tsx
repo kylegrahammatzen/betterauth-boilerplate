@@ -50,9 +50,9 @@ export const AppSidebar = (props: AppSidebarProps) => {
         </SidebarContent>
         <SidebarFooter>
           <SidebarMenu>
-            <SidebarMenuItem>
+            {/* <SidebarMenuItem>
               <OrganizationInvites />
-            </SidebarMenuItem>
+            </SidebarMenuItem> */}
             <SidebarMenuItem>
               <ProfileDropdown session={activeSession} />
             </SidebarMenuItem>

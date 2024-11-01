@@ -11,13 +11,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ProfileAvatar } from "./ProfileAvatar";
 import { SidebarMenuButton, useSidebar } from "../ui/sidebar";
-import { ChevronsUpDown, LogOut, User } from "lucide-react";
+import { ChevronsUpDown, LogOut, User, UserPlus } from "lucide-react";
 import { Session } from "@/lib/auth_types";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/authClient";
 import { cn } from "@/lib/utils";
 import { useTheme } from "../provider/ThemeProvider";
 import { ProfileToggleTheme } from "./ProfileToggleTheme";
+import { Badge } from "@/components/ui/badge";
 
 type ProfileDropdownProps = {
   session: Session;
@@ -28,6 +29,8 @@ const ProfileDropdown = (props: ProfileDropdownProps) => {
   const { state } = useSidebar();
   const name = props.session.user.name;
   const image = props.session.user.image;
+
+  const inviteCount = 5; // This could be replaced with a state variable or fetched data in a real application
 
   const handleSignout = async () => {
     await authClient.signOut();
@@ -41,7 +44,17 @@ const ProfileDropdown = (props: ProfileDropdownProps) => {
           size="lg"
           className="border data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
         >
-          <ProfileAvatar name={name} image={image} />
+          <div className="relative">
+            <ProfileAvatar name={name} image={image} />
+            {inviteCount > 0 && (
+              <Badge
+                variant="default"
+                className="absolute -bottom-1 -right-1 h-4 w-4 rounded-md p-0 text-[10px] font-medium flex items-center justify-center bg-primary text-primary-foreground"
+              >
+                {inviteCount}
+              </Badge>
+            )}
+          </div>
           <div className="grid flex-1 text-left text-sm leading-tight">
             <span className="truncate font-semibold">{name}</span>
           </div>
@@ -73,11 +86,23 @@ const ProfileDropdown = (props: ProfileDropdownProps) => {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem>
-            <User className="mr-2 h-4 w-4" />
+            <User className="mr-2 h-4 w-4 flex-shrink-0" />
             <span>Account</span>
           </DropdownMenuItem>
+          <DropdownMenuItem className="group">
+            <UserPlus className="mr-2 h-4 w-4 flex-shrink-0" />
+            <span>Invites</span>
+            {inviteCount > 0 && (
+              <Badge
+                variant="secondary"
+                className="ml-auto px-1 py-0 text-xs font-medium group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+              >
+                {inviteCount}
+              </Badge>
+            )}
+          </DropdownMenuItem>
           <DropdownMenuItem onClick={handleSignout}>
-            <LogOut className="mr-2 h-4 w-4" />
+            <LogOut className="mr-2 h-4 w-4 flex-shrink-0" />
             <span>Log out</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
