@@ -1,43 +1,19 @@
-import { useEffect, useState } from "react";
+"use client";
+
 import { Badge } from "@/components/ui/badge";
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { UserPlus } from "lucide-react";
-import { Invitation } from "@/lib/auth_types";
-import { getOrgInviteCount } from "@/app/actions/getOrgInviteCount";
+import { useProfile } from "../provider/ProfileProvider";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
 type ProfileInvitationsProps = {
-  onInvitationUpdate: (count: number) => void;
+  onOpenInvitations: () => void;
 };
 
-const ProfileInvitations = ({
-  onInvitationUpdate,
-}: ProfileInvitationsProps) => {
-  const [invitations, setInvitations] = useState<Invitation[]>([]);
-  const [inviteCount, setInviteCount] = useState(0);
-
-  useEffect(() => {
-    const fetchInviteCount = async () => {
-      const count = await getOrgInviteCount();
-      if (count !== null) {
-        setInviteCount(count);
-        onInvitationUpdate(count);
-      }
-    };
-
-    fetchInviteCount();
-    const intervalId = setInterval(fetchInviteCount, 30000);
-
-    return () => clearInterval(intervalId);
-  }, [onInvitationUpdate]);
-
-  // TODO: Implement a function to fetch actual invitations
-  // const fetchInvitations = async () => {
-  //   // Fetch invitations from your API
-  //   // setInvitations(fetchedInvitations)
-  // }
+export const ProfileInvitations = (props: ProfileInvitationsProps) => {
+  const { inviteCount } = useProfile();
 
   return (
-    <DropdownMenuItem className="group">
+    <DropdownMenuItem className="group" onSelect={props.onOpenInvitations}>
       <UserPlus className="mr-2 h-4 w-4 flex-shrink-0" />
       <span>Invitations</span>
       {inviteCount > 0 && (
@@ -51,5 +27,3 @@ const ProfileInvitations = ({
     </DropdownMenuItem>
   );
 };
-
-export { ProfileInvitations };

@@ -18,6 +18,8 @@ type ProfileContextType = {
   updateSession: (newSession: Session) => void;
   refreshInviteCount: () => Promise<void>;
   refreshInvitations: (page: number, perPage: number) => Promise<void>;
+  acceptInvitation: (invitationId: string) => Promise<void>;
+  declineInvitation: (invitationId: string) => Promise<void>;
 };
 
 const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
@@ -62,9 +64,48 @@ const ProfileProvider = (props: ProfileProviderProps) => {
   }, [fetchInviteCount]);
 
   const refreshInvitations = useCallback(
-    async (page: number, perPage: number) => {},
+    async (page: number, perPage: number) => {
+      const dummyInvitations: Invitation[] = [
+        {
+          id: "1",
+          expiresAt: new Date(),
+          status: "pending",
+          email: "john@acme.com",
+          organizationId: "org1",
+          role: "member",
+          inviterId: "inviter1",
+        },
+        {
+          id: "2",
+          expiresAt: new Date(),
+          status: "pending",
+          email: "jane@globex.com",
+          organizationId: "org2",
+          role: "admin",
+          inviterId: "inviter2",
+        },
+      ];
+      setInvitations(dummyInvitations);
+      setInviteCount(dummyInvitations.length);
+    },
     []
   );
+
+  const acceptInvitation = useCallback(async (invitationId: string) => {
+    setInvitations((prevInvitations) =>
+      prevInvitations.filter((invitation) => invitation.id !== invitationId)
+    );
+    setInviteCount((prevCount) => prevCount - 1);
+    console.log(`Accepting invitation ${invitationId}`);
+  }, []);
+
+  const declineInvitation = useCallback(async (invitationId: string) => {
+    setInvitations((prevInvitations) =>
+      prevInvitations.filter((invitation) => invitation.id !== invitationId)
+    );
+    setInviteCount((prevCount) => prevCount - 1);
+    console.log(`Declining invitation ${invitationId}`);
+  }, []);
 
   useEffect(() => {
     if (isMounted) {
@@ -91,6 +132,8 @@ const ProfileProvider = (props: ProfileProviderProps) => {
         updateSession,
         refreshInviteCount,
         refreshInvitations,
+        acceptInvitation,
+        declineInvitation,
       }}
     >
       {props.children}

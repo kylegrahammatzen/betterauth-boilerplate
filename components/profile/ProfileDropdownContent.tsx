@@ -10,12 +10,14 @@ import { Badge } from "@/components/ui/badge";
 import { LogOut, User, UserPlus } from "lucide-react";
 import { authClient } from "@/lib/authClient";
 import { useRouter } from "next/navigation";
+import { ProfileInvitations } from "./ProfileInvitations";
 
 type ProfileDropdownContentProps = {
   name: string;
   image?: string;
   email: string;
   inviteCount: number;
+  onOpenInvitations: () => void;
 };
 
 export const ProfileDropdownContent = (props: ProfileDropdownContentProps) => {
@@ -47,18 +49,7 @@ export const ProfileDropdownContent = (props: ProfileDropdownContentProps) => {
           <User className="mr-2 h-4 w-4 flex-shrink-0" />
           <span>Account</span>
         </DropdownMenuItem>
-        <DropdownMenuItem className="group">
-          <UserPlus className="mr-2 h-4 w-4 flex-shrink-0" />
-          <span>Invitations</span>
-          {props.inviteCount > 0 && (
-            <Badge
-              variant="secondary"
-              className="ml-auto px-1 py-0 text-xs font-medium group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
-            >
-              {props.inviteCount}
-            </Badge>
-          )}
-        </DropdownMenuItem>
+        <ProfileInvitations onOpenInvitations={props.onOpenInvitations} />
       </DropdownMenuGroup>
       <DropdownMenuSeparator />
       <DropdownMenuGroup>
