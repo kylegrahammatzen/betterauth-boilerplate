@@ -12,12 +12,11 @@ import {
   SidebarMenuItem,
   SidebarProvider,
 } from "@/components/ui/sidebar";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { ProfileDropdown } from "./ProfileDropdown";
-import { OrganizationSwitcher } from "./OrganizationSwitcher";
 import { ToggleSidebar } from "./ToggleSidebar";
-import { OrganizationProvider } from "./OrganizationProvider";
 import { ContentList } from "./ContentList";
+import { useMount } from "@/hooks/use-mount";
+import { ProfileDropdown } from "./profile/ProfileDropdown";
+import { OrganizationSwitcher } from "./OrganizationSwitcher";
 
 type AppSidebarProps = {
   initialSession: Session;
@@ -25,38 +24,43 @@ type AppSidebarProps = {
 };
 
 export const AppSidebar = (props: AppSidebarProps) => {
+  const isMounted = useMount();
+
   const { data } = useSession();
   const activeSession = data || props.initialSession;
 
+  if (!isMounted) {
+    return null; // Prevent rendering until after mount
+  }
+
   return (
     <SidebarProvider>
-      <TooltipProvider>
-        <OrganizationProvider>
-          <Sidebar collapsible="icon">
-            <SidebarHeader>
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <OrganizationSwitcher />
-                </SidebarMenuItem>
-              </SidebarMenu>
-            </SidebarHeader>
-            <SidebarContent>
-              <ContentList />
-            </SidebarContent>
-            <SidebarFooter>
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <ProfileDropdown session={activeSession} />
-                </SidebarMenuItem>
-              </SidebarMenu>
-            </SidebarFooter>
-          </Sidebar>
-          <SidebarInset className="h-full p-2">
-            <ToggleSidebar />
-            {props.children}
-          </SidebarInset>
-        </OrganizationProvider>
-      </TooltipProvider>
+      <Sidebar collapsible="icon">
+        <SidebarHeader>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <OrganizationSwitcher />
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarHeader>
+        <SidebarContent>
+          <ContentList />
+        </SidebarContent>
+        <SidebarFooter>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <h1>hi</h1>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <ProfileDropdown session={activeSession} />
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarFooter>
+      </Sidebar>
+      <SidebarInset className="h-full p-2">
+        <ToggleSidebar />
+        {props.children}
+      </SidebarInset>
     </SidebarProvider>
   );
 };

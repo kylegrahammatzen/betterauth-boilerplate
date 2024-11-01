@@ -1,3 +1,5 @@
+"use client";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -6,14 +8,27 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
 } from "@/components/ui/dropdown-menu";
 import { ProfileAvatar } from "./ProfileAvatar";
-import { SidebarMenuButton, useSidebar } from "./ui/sidebar";
-import { BadgeCheck, ChevronsUpDown, CreditCard, LogOut } from "lucide-react";
+import { SidebarMenuButton, useSidebar } from "../ui/sidebar";
+import {
+  BadgeCheck,
+  ChevronsUpDown,
+  CreditCard,
+  LogOut,
+  Sun,
+  Moon,
+  Laptop,
+  User,
+} from "lucide-react";
 import { Session } from "@/lib/auth_types";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/authClient";
 import { cn } from "@/lib/utils";
+import { useTheme } from "../ThemeProvider";
+import { ProfileToggleTheme } from "./ProfileToggleTheme";
 
 type ProfileDropdownProps = {
   session: Session;
@@ -22,13 +37,14 @@ type ProfileDropdownProps = {
 const ProfileDropdown = (props: ProfileDropdownProps) => {
   const router = useRouter();
   const { state } = useSidebar();
+  const { theme, setTheme } = useTheme();
   const name = props.session.user.name;
   const image = props.session.user.image;
 
-  async function handleSignout() {
+  const handleSignout = async () => {
     await authClient.signOut();
     router.refresh();
-  }
+  };
 
   return (
     <DropdownMenu>
@@ -64,20 +80,19 @@ const ProfileDropdown = (props: ProfileDropdownProps) => {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <BadgeCheck className="mr-2 h-4 w-4" />
-            Account
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <CreditCard className="mr-2 h-4 w-4" />
-            Billing
-          </DropdownMenuItem>
+          <ProfileToggleTheme />
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleSignout}>
-          <LogOut className="mr-2 h-4 w-4" />
-          Log out
-        </DropdownMenuItem>
+        <DropdownMenuGroup>
+          <DropdownMenuItem>
+            <User className="mr-2 h-4 w-4" />
+            <span>Account</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <LogOut className="mr-2 h-4 w-4" />
+            <span>Log out</span>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   );

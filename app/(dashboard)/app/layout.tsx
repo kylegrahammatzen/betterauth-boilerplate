@@ -1,4 +1,6 @@
 import { AppSidebar } from "@/components/AppSidebar";
+import { OrganizationProvider } from "@/components/OrganizationProvider";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -16,5 +18,11 @@ export default async function RootLayout({
     redirect("/signin");
   }
 
-  return <AppSidebar initialSession={session}>{children}</AppSidebar>;
+  return (
+    <TooltipProvider>
+      <OrganizationProvider>
+        <AppSidebar initialSession={session}>{children}</AppSidebar>
+      </OrganizationProvider>
+    </TooltipProvider>
+  );
 }

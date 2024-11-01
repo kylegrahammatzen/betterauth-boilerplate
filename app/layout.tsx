@@ -1,3 +1,4 @@
+import { ThemeProvider } from "@/components/ThemeProvider";
 import "@/styles/tailwind.css";
 
 type RootLayoutProps = {
@@ -6,8 +7,10 @@ type RootLayoutProps = {
 
 export default function RootLayout(props: RootLayoutProps) {
   return (
-    <html lang="en">
-      <body>{props.children}</body>
-    </html>
+    <ThemeProvider>
+      <html lang="en">
+        <body>{props.children}</body>
+      </html>
+    </ThemeProvider>
   );
 }

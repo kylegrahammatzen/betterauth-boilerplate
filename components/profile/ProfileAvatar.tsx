@@ -1,5 +1,5 @@
 import { getInitials } from "@/lib/getInitials";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 type ProfileAvatarProps = {
   name: string;
