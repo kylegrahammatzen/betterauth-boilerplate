@@ -6,10 +6,13 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupAction,
+  SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
   useSidebar,
 } from "@/components/ui/sidebar";
 import {
@@ -39,27 +42,77 @@ export function ContentList() {
               </Button>
             </SidebarMenuButton>
           ) : (
-            <div className="flex justify-between items-center">
-              <span className="font-medium pl-1">Example Content</span>
-              {isMobile ? (
-                <Button size="sm" variant="link">
-                  <Plus className="h-4 w-4" />
-                  <span className="sr-only">Add Content</span>
-                </Button>
-              ) : (
+            <>
+              <SidebarGroupContent className="flex items-center justify-between py-1">
+                <span className="font-medium">Example Content</span>
+                {isMobile ? (
+                  <Button size="sm" variant="link">
+                    <Plus className="h-4 w-4" />
+                    <span className="sr-only">Add Content</span>
+                  </Button>
+                ) : (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button size="sm" variant="link">
+                        <Plus className="h-4 w-4" />
+                        <span className="sr-only">Add Content</span>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="right" align="center">
+                      Add Content
+                    </TooltipContent>
+                  </Tooltip>
+                )}
+              </SidebarGroupContent>
+            </>
+          )}
+          <SidebarMenuSub>
+            <h1>content</h1>
+          </SidebarMenuSub>
+        </SidebarMenuItem>
+        <SidebarMenuItem>
+          {isCollapsed ? (
+            <>
+              <SidebarMenuButton asChild>
+                {isMobile ? (
+                  <Button variant="outline">
+                    <Plus className="h-4 w-4" />
+                    <span className="sr-only">Add Content</span>
+                  </Button>
+                ) : (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button className="px-2 h-8" variant="outline">
+                        <Plus className="h-4 w-4" />
+                        <span className="sr-only">Add Content</span>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="right" align="center">
+                      Add Whiteboard
+                    </TooltipContent>
+                  </Tooltip>
+                )}
+              </SidebarMenuButton>
+            </>
+          ) : (
+            <>
+              <SidebarMenuButton asChild>
+                <span className="font-medium">Content</span>
+              </SidebarMenuButton>
+              <SidebarMenuSub>
+                <h1>content</h1>
+              </SidebarMenuSub>
+              <SidebarGroupAction className="-mt-2">
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button size="sm" variant="link">
-                      <Plus className="h-4 w-4" />
-                      <span className="sr-only">Add Content</span>
-                    </Button>
+                    <Plus />
                   </TooltipTrigger>
                   <TooltipContent side="right" align="center">
-                    Add Content
+                    Add Whiteboard
                   </TooltipContent>
                 </Tooltip>
-              )}
-            </div>
+              </SidebarGroupAction>
+            </>
           )}
         </SidebarMenuItem>
       </SidebarMenu>
