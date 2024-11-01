@@ -17,7 +17,6 @@ import { getInitials } from "@/lib/getInitials";
 import { useOrganization } from "./provider/OrganizationProvider";
 import { authClient } from "@/lib/authClient";
 import type { Organization } from "@/lib/auth_types";
-import { cn } from "@/lib/utils";
 
 export function OrganizationSwitcher() {
   const { organizations, setActiveOrganization, addOrganization, isLoading } =
