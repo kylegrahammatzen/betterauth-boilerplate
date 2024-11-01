@@ -8,21 +8,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
 } from "@/components/ui/dropdown-menu";
 import { ProfileAvatar } from "./ProfileAvatar";
 import { SidebarMenuButton, useSidebar } from "../ui/sidebar";
-import {
-  BadgeCheck,
-  ChevronsUpDown,
-  CreditCard,
-  LogOut,
-  Sun,
-  Moon,
-  Laptop,
-  User,
-} from "lucide-react";
+import { ChevronsUpDown, LogOut, User } from "lucide-react";
 import { Session } from "@/lib/auth_types";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/authClient";
@@ -37,7 +26,6 @@ type ProfileDropdownProps = {
 const ProfileDropdown = (props: ProfileDropdownProps) => {
   const router = useRouter();
   const { state } = useSidebar();
-  const { theme, setTheme } = useTheme();
   const name = props.session.user.name;
   const image = props.session.user.image;
 
@@ -88,7 +76,7 @@ const ProfileDropdown = (props: ProfileDropdownProps) => {
             <User className="mr-2 h-4 w-4" />
             <span>Account</span>
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={handleSignout}>
             <LogOut className="mr-2 h-4 w-4" />
             <span>Log out</span>
           </DropdownMenuItem>
