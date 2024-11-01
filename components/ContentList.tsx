@@ -2,13 +2,8 @@
 
 import React from "react";
 import {
-  SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupAction,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -51,7 +46,7 @@ export function ContentList() {
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent side="right" align="center">
-                      Add Whiteboard
+                      Add X
                     </TooltipContent>
                   </Tooltip>
                 )}
@@ -71,7 +66,7 @@ export function ContentList() {
                     <Plus />
                   </TooltipTrigger>
                   <TooltipContent side="right" align="center">
-                    Add Whiteboard
+                    Add X
                   </TooltipContent>
                 </Tooltip>
               </SidebarGroupAction>
