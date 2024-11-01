@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-export function ContentList() {
+const ContentList = () => {
   const { state = "open" } = useSidebar();
   const isMobile = useIsMobile();
 
@@ -29,51 +29,47 @@ export function ContentList() {
     <SidebarGroup>
       <SidebarMenu>
         <SidebarMenuItem>
-          {isCollapsed ? (
-            <>
-              <SidebarMenuButton asChild>
-                {isMobile ? (
-                  <Button variant="outline">
-                    <Plus className="h-4 w-4" />
-                    <span className="sr-only">Add Content</span>
-                  </Button>
-                ) : (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button className="px-2 h-8" variant="outline">
-                        <Plus className="h-4 w-4" />
-                        <span className="sr-only">Add Content</span>
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side="right" align="center">
-                      Add X
-                    </TooltipContent>
-                  </Tooltip>
-                )}
-              </SidebarMenuButton>
-            </>
-          ) : (
-            <>
-              <SidebarMenuButton asChild>
-                <span className="font-medium">Content</span>
-              </SidebarMenuButton>
-              <SidebarMenuSub>
-                <h1>content</h1>
-              </SidebarMenuSub>
-              <SidebarGroupAction className="-mt-2">
+          <SidebarMenuButton asChild>
+            {isCollapsed ? (
+              isMobile ? (
+                <Button variant="outline">
+                  <Plus className="h-4 w-4" />
+                  <span className="sr-only">Add Content</span>
+                </Button>
+              ) : (
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Plus />
+                    <Button className="px-2 h-8" variant="outline">
+                      <Plus className="h-4 w-4" />
+                      <span className="sr-only">Add Content</span>
+                    </Button>
                   </TooltipTrigger>
                   <TooltipContent side="right" align="center">
                     Add X
                   </TooltipContent>
                 </Tooltip>
-              </SidebarGroupAction>
-            </>
-          )}
+              )
+            ) : (
+              <span className="font-medium">Content</span>
+            )}
+          </SidebarMenuButton>
+          <SidebarMenuSub>
+            <h1>content</h1>
+          </SidebarMenuSub>
+          <SidebarGroupAction className="-mt-2">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Plus />
+              </TooltipTrigger>
+              <TooltipContent side="right" align="center">
+                Add X
+              </TooltipContent>
+            </Tooltip>
+          </SidebarGroupAction>
         </SidebarMenuItem>
       </SidebarMenu>
     </SidebarGroup>
   );
-}
+};
+
+export { ContentList };

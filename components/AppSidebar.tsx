@@ -18,6 +18,7 @@ import { useMount } from "@/hooks/use-mount";
 import { ProfileDropdown } from "./profile/ProfileDropdown";
 import { OrganizationSwitcher } from "./OrganizationSwitcher";
 import { AppSidebarInset } from "./AppSidebarInset";
+import { OrganizationInvites } from "./OrganizationInvites";
 
 type AppSidebarProps = {
   initialSession: Session;
@@ -50,7 +51,7 @@ export const AppSidebar = (props: AppSidebarProps) => {
         <SidebarFooter>
           <SidebarMenu>
             <SidebarMenuItem>
-              <h1>hi</h1>
+              <OrganizationInvites />
             </SidebarMenuItem>
             <SidebarMenuItem>
               <ProfileDropdown session={activeSession} />
