@@ -17,6 +17,7 @@ import { ContentList } from "./ContentList";
 import { useMount } from "@/hooks/use-mount";
 import { ProfileDropdown } from "./profile/ProfileDropdown";
 import { OrganizationSwitcher } from "./OrganizationSwitcher";
+import { AppSidebarInset } from "./AppSidebarInset";
 
 type AppSidebarProps = {
   initialSession: Session;
@@ -30,12 +31,12 @@ export const AppSidebar = (props: AppSidebarProps) => {
   const activeSession = data || props.initialSession;
 
   if (!isMounted) {
-    return null; // Prevent rendering until after mount
+    return null;
   }
 
   return (
     <SidebarProvider>
-      <Sidebar collapsible="icon">
+      <Sidebar variant="inset" collapsible="icon">
         <SidebarHeader>
           <SidebarMenu>
             <SidebarMenuItem>
@@ -57,10 +58,7 @@ export const AppSidebar = (props: AppSidebarProps) => {
           </SidebarMenu>
         </SidebarFooter>
       </Sidebar>
-      <SidebarInset>
-        <ToggleSidebar />
-        {props.children}
-      </SidebarInset>
+      <AppSidebarInset>{props.children}</AppSidebarInset>
     </SidebarProvider>
   );
 };
