@@ -1,4 +1,4 @@
-import { ThemeProvider } from "@/components/ThemeProvider";
+import { ThemeProvider } from "@/components/provider/ThemeProvider";
 import "@/styles/tailwind.css";
 
 type RootLayoutProps = {

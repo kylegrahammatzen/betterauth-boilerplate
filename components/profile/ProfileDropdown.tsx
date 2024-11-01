@@ -27,7 +27,7 @@ import { Session } from "@/lib/auth_types";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/authClient";
 import { cn } from "@/lib/utils";
-import { useTheme } from "../ThemeProvider";
+import { useTheme } from "../provider/ThemeProvider";
 import { ProfileToggleTheme } from "./ProfileToggleTheme";
 
 type ProfileDropdownProps = {

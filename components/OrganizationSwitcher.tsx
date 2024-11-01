@@ -14,7 +14,7 @@ import { SidebarMenuButton, useSidebar } from "@/components/ui/sidebar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { getInitials } from "@/lib/getInitials";
-import { useOrganization } from "./OrganizationProvider";
+import { useOrganization } from "./provider/OrganizationProvider";
 import { authClient } from "@/lib/authClient";
 import type { Organization } from "@/lib/auth_types";
 import { cn } from "@/lib/utils";

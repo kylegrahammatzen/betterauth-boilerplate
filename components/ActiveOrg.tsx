@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useOrganization } from "./OrganizationProvider";
+import { useOrganization } from "./provider/OrganizationProvider";
 import { authClient } from "@/lib/authClient";
 
 export function ActiveOrg() {

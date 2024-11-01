@@ -57,7 +57,7 @@ export const AppSidebar = (props: AppSidebarProps) => {
           </SidebarMenu>
         </SidebarFooter>
       </Sidebar>
-      <SidebarInset className="h-full p-2">
+      <SidebarInset>
         <ToggleSidebar />
         {props.children}
       </SidebarInset>

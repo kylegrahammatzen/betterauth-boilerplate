@@ -1,5 +1,5 @@
 import { AppSidebar } from "@/components/AppSidebar";
-import { OrganizationProvider } from "@/components/OrganizationProvider";
+import { OrganizationProvider } from "@/components/provider/OrganizationProvider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";

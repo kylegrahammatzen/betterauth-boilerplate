@@ -1,6 +1,6 @@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Laptop, Moon, Sun } from "lucide-react";
-import { useTheme } from "../ThemeProvider";
+import { useTheme } from "../provider/ThemeProvider";
 
 const ProfileToggleTheme = () => {
   const { theme, setTheme } = useTheme();
@@ -9,7 +9,7 @@ const ProfileToggleTheme = () => {
     <div className="flex items-center justify-between px-2 py-2">
       <span className="text-sm font-medium">Theme</span>
       <Tabs
-        defaultValue={theme}
+        value={theme}
         onValueChange={(value) => setTheme(value as typeof theme)}
         className="ml-auto"
       >
