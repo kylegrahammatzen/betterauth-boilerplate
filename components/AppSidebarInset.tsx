@@ -11,7 +11,9 @@ const AppSidebarInset = (props: AppSidebarInsetProps) => {
   return (
     <SidebarInset>
       <ToggleSidebar />
-      <div className={cn("p-2", state == "collapsed" ? "pt-10" : "pt-14")}>
+      <div
+        className={cn("p-2", state == "collapsed" ? "pt-14" : "pt-[4.5rem]")}
+      >
         {props.children}
       </div>
     </SidebarInset>

@@ -73,7 +73,7 @@ const ProfileDropdown = (props: ProfileDropdownProps) => {
           <ProfileAvatar name={name} image={image} />
           <div className="grid flex-1 text-left text-sm leading-tight">
             <span className="truncate font-semibold">{name}</span>
-            <span className="truncate text-xs text-gray-600">
+            <span className="truncate text-xs text-gray-600 dark:text-gray-400">
               {props.session.user.email}
             </span>
           </div>
