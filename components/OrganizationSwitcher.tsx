@@ -122,10 +122,10 @@ const OrganizationSwitcher = () => {
         <div
           className={`transition-all duration-300 ease-in-out overflow-hidden ${
             filteredOrgs.length > 2
-              ? "h-[9.25rem]"
+              ? "h-[9rem]"
               : filteredOrgs.length === 2
-              ? "h-[6.16rem]"
-              : "h-[3.08rem]"
+              ? "h-[6rem]"
+              : "h-[3rem]"
           }`}
         >
           <ScrollArea className="h-full">
