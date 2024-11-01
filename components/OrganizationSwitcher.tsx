@@ -10,22 +10,21 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { SidebarMenuButton, useSidebar } from "@/components/ui/sidebar";
+import { SidebarMenuButton } from "@/components/ui/sidebar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
-import { getInitials } from "@/lib/getInitials";
 import { useOrganization } from "./provider/OrganizationProvider";
 import { authClient } from "@/lib/authClient";
 import type { Organization } from "@/lib/auth_types";
+import { OrganizationAvatar } from "./OrganizationAvatar";
 
-export function OrganizationSwitcher() {
+const OrganizationSwitcher = () => {
   const { organizations, setActiveOrganization, addOrganization, isLoading } =
     useOrganization();
   const { data: activeOrganization } = authClient.useActiveOrganization();
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
   const searchRef = useRef<HTMLInputElement>(null);
-  const { state } = useSidebar();
 
   const filteredOrgs = organizations
     .filter((org) =>
@@ -35,13 +34,6 @@ export function OrganizationSwitcher() {
     )
     .filter((org) => org.id !== activeOrganization?.id);
 
-  const scrollHeight =
-    filteredOrgs.length > 2
-      ? "h-[9.25rem]"
-      : filteredOrgs.length === 2
-      ? "h-[6.16rem]"
-      : "h-[3.08rem]";
-
   const handleSelect = (orgId: string) => {
     setActiveOrganization(orgId);
     setIsOpen(false);
@@ -49,12 +41,13 @@ export function OrganizationSwitcher() {
   };
 
   const handleOpenChange = (open: boolean) => {
-    if (isLoading) return;
-    setIsOpen(open);
-    if (open) {
-      setTimeout(() => searchRef.current?.focus(), 0);
-    } else {
-      setSearch("");
+    if (!isLoading) {
+      setIsOpen(open);
+      if (open) {
+        setTimeout(() => searchRef.current?.focus(), 0);
+      } else {
+        setSearch("");
+      }
     }
   };
 
@@ -82,9 +75,7 @@ export function OrganizationSwitcher() {
             "Loading"
           ) : activeOrganization ? (
             <>
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                {getInitials(activeOrganization.name)}
-              </div>
+              <OrganizationAvatar name={activeOrganization.name} />
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">
                   {activeOrganization.name}
@@ -129,7 +120,13 @@ export function OrganizationSwitcher() {
           Organizations ({filteredOrgs.length})
         </DropdownMenuLabel>
         <div
-          className={`${scrollHeight} transition-all duration-300 ease-in-out overflow-hidden`}
+          className={`transition-all duration-300 ease-in-out overflow-hidden ${
+            filteredOrgs.length > 2
+              ? "h-[9.25rem]"
+              : filteredOrgs.length === 2
+              ? "h-[6.16rem]"
+              : "h-[3.08rem]"
+          }`}
         >
           <ScrollArea className="h-full">
             {filteredOrgs.length === 0 ? (
@@ -143,17 +140,9 @@ export function OrganizationSwitcher() {
                 <DropdownMenuItem
                   key={org.id}
                   className="flex items-center gap-2 p-2 cursor-pointer"
-                  onSelect={(e) => {
-                    if (document.activeElement === searchRef.current) {
-                      e.preventDefault();
-                    } else {
-                      handleSelect(org.id);
-                    }
-                  }}
+                  onSelect={() => handleSelect(org.id)}
                 >
-                  <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                    {getInitials(org.name)}
-                  </div>
+                  <OrganizationAvatar name={org.name} />
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="font-semibold truncate">{org.name}</span>
                   </div>
@@ -163,15 +152,12 @@ export function OrganizationSwitcher() {
           </ScrollArea>
         </div>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onSelect={(e) => {
-            e.preventDefault();
-            handleAddOrg();
-          }}
-        >
+        <DropdownMenuItem onSelect={handleAddOrg}>
           <div className="font-medium">Add organization</div>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
-}
+};
+
+export { OrganizationSwitcher };
