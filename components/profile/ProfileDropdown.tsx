@@ -1,38 +1,29 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ProfileAvatar } from "./ProfileAvatar";
-import { SidebarMenuButton, useSidebar } from "../ui/sidebar";
-import { ChevronsUpDown, LogOut, User, UserPlus } from "lucide-react";
-import { Session } from "@/lib/auth_types";
-import { useRouter } from "next/navigation";
-import { authClient } from "@/lib/authClient";
+import { useSidebar } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
-import { ProfileToggleTheme } from "./ProfileToggleTheme";
-import { Badge } from "@/components/ui/badge";
-import { ProfileBadge } from "./ProfileBadge";
-import { useEffect, useState } from "react";
+import { ProfileDropdownContent } from "./ProfileDropdownContent";
+import { ProfileDropdownCollapsedButton } from "./ProfileDropdownCollapsedButton";
+import { ProfileDropdownExpandedButton } from "./ProfileDropdownExpandedButton";
+import { useProfile } from "../provider/ProfileProvider";
 
-type ProfileDropdownProps = {
-  session: Session;
-};
-
-const ProfileDropdown = (props: ProfileDropdownProps) => {
-  const router = useRouter();
+export const ProfileDropdown = () => {
   const { state } = useSidebar();
-  const name = props.session.user.name;
-  const image = props.session.user.image;
+  const { session, inviteCount } = useProfile();
+  const [showBadge, setShowBadge] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
-  const inviteCount = 5;
-  const [showBadge, setShowBadge] = useState(false);
+  if (!session) {
+    return null;
+  }
+
+  const { name, image, email } = session.user;
 
   useEffect(() => {
     setShowBadge(false);
@@ -42,45 +33,26 @@ const ProfileDropdown = (props: ProfileDropdownProps) => {
     return () => clearTimeout(timer);
   }, [state]);
 
-  const handleSignout = async () => {
-    await authClient.signOut();
-    router.refresh();
-  };
-
-  const CollapsedButton = (
-    <div className="relative">
-      <SidebarMenuButton
-        size="lg"
-        className="border data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-      >
-        <ProfileAvatar name={name} image={image} />
-      </SidebarMenuButton>
-      {inviteCount > 0 && <ProfileBadge count={inviteCount} show={showBadge} />}
-    </div>
-  );
-
-  const ExpandedButton = (
-    <SidebarMenuButton
-      size="lg"
-      className="border data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-    >
-      <div className="relative">
-        <ProfileAvatar name={name} image={image} />
-        {inviteCount > 0 && (
-          <ProfileBadge count={inviteCount} show={showBadge} />
-        )}
-      </div>
-      <div className="grid flex-1 text-left text-sm leading-tight">
-        <span className="truncate font-semibold">{name}</span>
-      </div>
-      <ChevronsUpDown className="ml-auto size-4" />
-    </SidebarMenuButton>
-  );
-
   return (
-    <DropdownMenu>
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
-        {state === "collapsed" ? CollapsedButton : ExpandedButton}
+        <div>
+          {state === "collapsed" ? (
+            <ProfileDropdownCollapsedButton
+              name={name}
+              image={image}
+              inviteCount={inviteCount}
+              showBadge={showBadge}
+            />
+          ) : (
+            <ProfileDropdownExpandedButton
+              name={name}
+              image={image}
+              inviteCount={inviteCount}
+              showBadge={showBadge}
+            />
+          )}
+        </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         className={cn(
@@ -91,48 +63,13 @@ const ProfileDropdown = (props: ProfileDropdownProps) => {
         align="end"
         sideOffset={4}
       >
-        <DropdownMenuLabel className="p-0 font-normal flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-          <ProfileAvatar name={name} image={image} />
-          <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-semibold">{name}</span>
-            <span className="truncate text-xs text-gray-600 dark:text-gray-400">
-              {props.session.user.email}
-            </span>
-          </div>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <ProfileToggleTheme />
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <User className="mr-2 h-4 w-4 flex-shrink-0" />
-            <span>Account</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem className="group">
-            <UserPlus className="mr-2 h-4 w-4 flex-shrink-0" />
-            <span>Invites</span>
-            {inviteCount > 0 && (
-              <Badge
-                variant="secondary"
-                className="ml-auto px-1 py-0 text-xs font-medium group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
-              >
-                {inviteCount}
-              </Badge>
-            )}
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuItem onClick={handleSignout}>
-            <LogOut className="mr-3 h-4 w-4 flex-shrink-0" />
-            <span>Log out</span>
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
+        <ProfileDropdownContent
+          name={name}
+          image={image}
+          email={email}
+          inviteCount={inviteCount}
+        />
       </DropdownMenuContent>
     </DropdownMenu>
   );
 };
-
-export { ProfileDropdown };

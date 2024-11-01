@@ -13,10 +13,10 @@ import {
 import { SidebarMenuButton } from "@/components/ui/sidebar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
-import { useOrganization } from "./provider/OrganizationProvider";
 import { authClient } from "@/lib/authClient";
 import type { Organization } from "@/lib/auth_types";
 import { OrganizationAvatar } from "./OrganizationAvatar";
+import { useOrganization } from "../provider/OrganizationProvider";
 
 const OrganizationSwitcher = () => {
   const { organizations, setActiveOrganization, addOrganization, isLoading } =
