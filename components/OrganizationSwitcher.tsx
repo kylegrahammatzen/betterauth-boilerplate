@@ -83,12 +83,7 @@ export function OrganizationSwitcher() {
             "Loading"
           ) : activeOrganization ? (
             <>
-              <div
-                className={cn(
-                  "flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground",
-                  state !== "collapsed" && "-ml-1"
-                )}
-              >
+              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                 {getInitials(activeOrganization.name)}
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
@@ -100,12 +95,10 @@ export function OrganizationSwitcher() {
           ) : (
             <>
               <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-muted text-sidebar-muted-foreground">
-                <Users
-                  className={cn(state !== "collapsed" && "-ml-2", "h-4 w-4")}
-                />
+                <Users className="h-4 w-4" />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="-ml-2 text-xs text-muted-foreground">
+                <span className="text-xs text-muted-foreground">
                   Select an organization
                 </span>
               </div>
