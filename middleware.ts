@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { initAuthbase } from "./lib/db/authBase";
+import { initAuthbase } from "./lib/db/authbase";
 
 export const PRIVATE_ROUTES = [/^\/app($|\/.*|\d+)/];
 export const LOGIN_URL = "/";

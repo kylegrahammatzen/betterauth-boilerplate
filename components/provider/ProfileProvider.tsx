@@ -4,12 +4,15 @@ import React, {
   createContext,
   useContext,
   useState,
-  useEffect,
   useCallback,
+  useEffect,
 } from "react";
 import { Session, Invitation } from "@/lib/auth_types";
-import { getOrgInviteCount } from "@/app/actions/getOrgInviteCount";
+import { getOrgInviteCount } from "@/app/actions/getOrgInvites";
 import { useMount } from "@/hooks/use-mount";
+import { authClient } from "@/lib/authClient";
+import { APIError } from "better-auth/api";
+import { toast } from "@/hooks/use-toast";
 
 type ProfileContextType = {
   session: Session | null;
@@ -17,9 +20,9 @@ type ProfileContextType = {
   invitations: Invitation[];
   updateSession: (newSession: Session) => void;
   refreshInviteCount: () => Promise<void>;
-  refreshInvitations: (page: number, perPage: number) => Promise<void>;
+  refreshInvitations: () => Promise<void>;
   acceptInvitation: (invitationId: string) => Promise<void>;
-  declineInvitation: (invitationId: string) => Promise<void>;
+  rejectInvitation: (invitationId: string) => Promise<void>;
 };
 
 const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
@@ -41,30 +44,35 @@ const ProfileProvider = (props: ProfileProviderProps) => {
   const [session, setSession] = useState<Session | null>(props.initialSession);
   const [inviteCount, setInviteCount] = useState(0);
   const [invitations, setInvitations] = useState<Invitation[]>([]);
-  const [refreshInterval, setRefreshInterval] = useState(30000);
   const isMounted = useMount();
 
-  const fetchInviteCount = useCallback(async () => {
-    const count = await getOrgInviteCount();
-    if (count !== null) {
-      if (count === inviteCount) {
-        setRefreshInterval((prevInterval) =>
-          Math.min(prevInterval * 2, 120000)
-        );
-      } else {
-        setRefreshInterval(30000);
+  useEffect(() => {
+    const fetchInviteCount = async () => {
+      const count = await getOrgInviteCount();
+      if (count !== null) {
+        setInviteCount(count);
       }
-      setInviteCount(count);
-    }
-  }, [inviteCount]);
+    };
+
+    // Fetch immediately on mount
+    fetchInviteCount();
+
+    // Set up interval to fetch every 30 seconds
+    const intervalId = setInterval(fetchInviteCount, 30000);
+
+    // Clean up interval on unmount
+    return () => clearInterval(intervalId);
+  }, []);
 
   const refreshInviteCount = useCallback(async () => {
-    await fetchInviteCount();
-    setRefreshInterval(30000);
-  }, [fetchInviteCount]);
+    const count = await getOrgInviteCount();
+    if (count !== null) {
+      setInviteCount(count);
+    }
+  }, []);
 
-  const refreshInvitations = useCallback(
-    async (page: number, perPage: number) => {
+  const refreshInvitations = useCallback(async () => {
+    try {
       const dummyInvitations: Invitation[] = [
         {
           id: "1",
@@ -87,33 +95,50 @@ const ProfileProvider = (props: ProfileProviderProps) => {
       ];
       setInvitations(dummyInvitations);
       setInviteCount(dummyInvitations.length);
-    },
-    []
-  );
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to refresh invitations. Please try again.",
+        variant: "destructive",
+      });
+    }
+  }, []);
 
   const acceptInvitation = useCallback(async (invitationId: string) => {
-    setInvitations((prevInvitations) =>
-      prevInvitations.filter((invitation) => invitation.id !== invitationId)
-    );
-    setInviteCount((prevCount) => prevCount - 1);
-    console.log(`Accepting invitation ${invitationId}`);
-  }, []);
-
-  const declineInvitation = useCallback(async (invitationId: string) => {
-    setInvitations((prevInvitations) =>
-      prevInvitations.filter((invitation) => invitation.id !== invitationId)
-    );
-    setInviteCount((prevCount) => prevCount - 1);
-    console.log(`Declining invitation ${invitationId}`);
-  }, []);
-
-  useEffect(() => {
-    if (isMounted) {
-      fetchInviteCount();
-      const intervalId = setInterval(fetchInviteCount, refreshInterval);
-      return () => clearInterval(intervalId);
+    try {
+      await authClient.organization.acceptInvitation({
+        invitationId: invitationId,
+      });
+      setInvitations((prevInvitations) =>
+        prevInvitations.filter((invitation) => invitation.id !== invitationId)
+      );
+      setInviteCount((prevCount) => prevCount - 1);
+      toast({
+        title: "Invitation Accepted",
+        description: "You have successfully joined the organization.",
+      });
+    } catch (error) {
+      throw error;
     }
-  }, [isMounted, fetchInviteCount, refreshInterval]);
+  }, []);
+
+  const rejectInvitation = useCallback(async (invitationId: string) => {
+    try {
+      await authClient.organization.rejectInvitation({
+        invitationId: invitationId,
+      });
+      setInvitations((prevInvitations) =>
+        prevInvitations.filter((invitation) => invitation.id !== invitationId)
+      );
+      setInviteCount((prevCount) => prevCount - 1);
+      toast({
+        title: "Invitation Rejected",
+        description: "The invitation has been rejected.",
+      });
+    } catch (error) {
+      throw error;
+    }
+  }, []);
 
   const updateSession = (newSession: Session) => {
     setSession(newSession);
@@ -133,7 +158,7 @@ const ProfileProvider = (props: ProfileProviderProps) => {
         refreshInviteCount,
         refreshInvitations,
         acceptInvitation,
-        declineInvitation,
+        rejectInvitation,
       }}
     >
       {props.children}
